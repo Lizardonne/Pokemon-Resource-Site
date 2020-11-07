@@ -19,7 +19,7 @@ const routes = [
   },
   {
     path: "/teambuilder",
-    name: "Team Builder",
+    name: "TeamBuilder",
     component: TeamBuilder
   }
 ];

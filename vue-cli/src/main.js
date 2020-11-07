@@ -5,7 +5,6 @@ import router from "./router";
 Vue.config.productionTip = false;
 
 let data = {
-  urlBase: "https://pokeapi.co/api/v2/",
   favorites: []
 };
 

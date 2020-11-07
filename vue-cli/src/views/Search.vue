@@ -9,7 +9,9 @@
 import DexTemplate from "../components/DexTemplate.vue";
 export default {
   name: "Search",
-  components: DexTemplate,
+  components: {
+    DexTemplate
+  },
   computed: {
     dex() {
       // FIXME: fetch data
