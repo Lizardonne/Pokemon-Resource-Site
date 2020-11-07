@@ -12,12 +12,12 @@
         <tr>
           <th></th>
           <template v-for="n in teamSize">
-            <th :key="n">
+            <th v-bind:id="'header-' + n" :key="n">
               <input v-model="inputs[n]" class="input" type="text" placeholder="PKMN" />
             </th>
           </template>
-          <th>Weak</th>
-          <th>Resist</th>
+          <th id="header-weak">Weak</th>
+          <th id="header-resist">Resist</th>
         </tr>
       </thead>
       <tbody>
@@ -25,10 +25,10 @@
           <tr :key="type.name">
             <th scope="col" class="row-header">{{ type.name }}</th>
             <template v-for="n in teamSize">
-              <td :key="n" v-bind:id="type.name + '-' + n"></td>
+              <td :key="n" v-bind:id="cellID(type.name, n)"></td>
             </template>
-            <th></th>
-            <th></th>
+            <th v-bind:id="type.name + '-weak'"></th>
+            <th v-bind:id="type.name + '-resist'"></th>
           </tr>
         </template>
       </tbody>
@@ -41,18 +41,9 @@ export default {
   name: "TeamBuilder",
   data() {
     return {
-      types: Array,
+      types: [],
       inputs: [],
-      teamSize: 6,
-      effect: {
-        noEffect: 0,
-        snve: 0.25,
-        nve: 0.5,
-        neutral: 1,
-        se: 2,
-        sse: 4,
-        empty: "*"
-      }
+      teamSize: 6
     };
   },
   created() {
@@ -61,66 +52,136 @@ export default {
         return response.json();
       })
       .then(json => {
-        this.types = json.results;
-        delete this.types[--this.types.length];  // remove Shadow type
-        delete this.types[--this.types.length];  // remove Unknown type
+        delete json.results[--json.count]; // remove Shadow type
+        delete json.results[--json.count]; // remove Unknown type
+        json.results.forEach(type => {
+          fetch(type.url)
+            .then(response => {
+              return response.json();
+            })
+            .then(json => {
+              this.types.push(json);
+            });
+        });
       });
   },
   methods: {
+    cellID(row, col) {
+      return row + "-" + col;
+    },
     effectiveness() {
-      for(var col in this.inputs) {
-        fetch("https://pokeapi.co/api/v2/pokemon/" + this.inputs[col])
+      const EMPTY = "";
+      for (var col in this.inputs) {
+        getPokemon("https://pokeapi.co/api/v2/pokemon/" + this.inputs[col].toLowerCase(), col)
+          .then(result => {
+            var pkmn = result.json;
+            var col = result.col;
+
+            if (pkmn === null) {
+              this.types.forEach(type => {
+                document.getElementById(this.cellID(type.name, col)).innerText = EMPTY;
+              });
+            }
+            else {
+              if (pkmn !== null) {
+                var pkmnTypes = [];
+                pkmn.types.forEach(obj => {
+                  this.types.forEach(template => {
+                    if (obj.type.name === template.name) {
+                      pkmnTypes.push(template);
+                    }
+                  });
+                });
+
+                this.types.forEach(type => {
+                  var effectiveness = 1;
+                  pkmnTypes.forEach(pkmnType => {
+                    pkmnType.damage_relations.no_damage_from.forEach(immunity => {
+                      if (immunity.name === type.name) {
+                        effectiveness *= 0;
+                      }
+                    });
+                    pkmnType.damage_relations.double_damage_from.forEach(weakness => {
+                      if (weakness.name === type.name) {
+                        effectiveness *= 2;
+                      }
+                    });
+                    pkmnType.damage_relations.half_damage_from.forEach(resistance => {
+                      if (resistance.name === type.name) {
+                        effectiveness *= 0.5;
+                      }
+                    });
+                  });
+
+                  var currentCell = document.getElementById(this.cellID(type.name, col));
+                  switch (effectiveness) {
+                    case 0:
+                      currentCell.innerText = "No effect";
+                      break;
+                    case 0.25:
+                      currentCell.innerText = "1/4";
+                      break;
+                    case 0.5:
+                      currentCell.innerText = "1/2";
+                      break;
+                    case 1:
+                      currentCell.innerText = "";
+                      break;
+                    case 2:
+                      currentCell.innerText = "2";
+                      break;
+                    case 4:
+                      currentCell.innerText = "4";
+                      break;
+                    default:
+                      currentCell.innerText = "*";
+                      break;
+                  }
+                });
+              }
+            }
+          });
+      }
+
+      async function getPokemon(url, col) {
+        return fetch(url)
           .then(response => {
+            if (!response.ok) {
+              throw new Error();
+            }
             return response.json();
           })
           .then(json => {
-            var pkmn = json;
-            if(pkmn !== null) {
-              var pkmnTypes = [];
-              pkmn.types.forEach(obj => {
-                this.types.forEach(template => {
-                  if(obj.type.name === template.name) {
-                    pkmnTypes.push(template);
-                  }
-                });
-              });
-
-              this.types.forEach(type => {
-                // FIXME: calculate effectiveness, assign to cell
-                //eff = offType->defType
-                var effectiveness = 1;
-                var result;
-                switch (effectiveness) {
-                  case 0.25:
-                    result = this.effect.snve;
-                    break;
-                  case 0.5:
-                    result = this.effect.nve;
-                    break;
-                  case 1:
-                    result = this.effect.neutral;
-                    break;
-                  case 2:
-                    result = this.effect.se;
-                    break;
-                  case 4:
-                    result = this.effect.sse;
-                    break;
-                  default:
-                    result = this.effect.empty;
-                    break;
-                }
-                var id = type.name + "-" + col;
-                document.getElementById(id).innerText = result;
-              });
-            }
+            return {
+              json: json,
+              col: col
+            };
           })
-          .catch(error => console.error(error));
+          .catch(() => {
+            return {
+              json: null,
+              col: col
+            };
+          });
       }
     }
   },
   watch: {
-    inputs: "effectiveness"
+    inputs: {
+      handler: "effectiveness",
+      deep: true
+    }
   }
 };
-</script><style lang="css" scoped></style>
+</script>
+
+<style lang="css" scoped>
+input {
+  width: 90%;
+  padding: 0 5%;
+  text-align: center;
+}
+.row-header {
+  text-align: right;
+}
+</style>
