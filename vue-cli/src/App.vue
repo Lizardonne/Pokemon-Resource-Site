@@ -7,7 +7,9 @@
     </div>
     <router-view />
     <div id="footer">
-      <a href="#">GitHub</a>
+      <div>
+        <a href="#">GitHub</a>
+      </div>
     </div>
   </div>
 </template>
@@ -45,10 +47,15 @@
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
-  justify-content: center;
-  padding: 5%;
+  padding: 2%;
+  background-color: white;
 }
+#footer div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
 p {
   margin: 0;
 }

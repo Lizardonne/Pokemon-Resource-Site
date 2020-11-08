@@ -31,8 +31,8 @@
             <template v-for="n in teamSize">
               <td :key="n" v-bind:id="cellID(type.name, n - 1)"></td>
             </template>
-            <th v-bind:id="type.name + '-weak'">0</th>
-            <th v-bind:id="type.name + '-resist'">0</th>
+            <th v-bind:id="type.name + '-weak'"></th>
+            <th v-bind:id="type.name + '-resist'"></th>
           </tr>
         </template>
       </tbody>
@@ -46,20 +46,22 @@ export default {
   data() {
     // FIXME: fetch team from root-data
     var team = new Array(6);
-    for (var i in team) {
-      team[i] = this.$root.$data.team[i].name;
+    for(var i = 0; i < team.length; i++) {
+      if(this.$root.$data.team[i] !== null) {
+        team[i] = this.capitalize(this.$root.$data.team[i].name);
+      }
     }
 
     return {
       types: [],
       team: team,
       effect: {
-        noEffect: "0",
-        snve: "1/4",
-        nve: "1/2",
+        noEffect: "0x",
+        snve: "1/4x",
+        nve: "1/2x",
         neutral: "",
-        se: "2",
-        sse: "4"
+        se: "2x",
+        sse: "4x"
       }
     };
   },
@@ -80,6 +82,9 @@ export default {
               this.types.push(json);
             });
         });
+        console.log("start");
+        this.effectiveness();
+        console.log("should be done");
       });
   },
   computed: {
@@ -106,113 +111,122 @@ export default {
             })
             .then(json => {
               this.$root.$data.team[col] = json;
-              this.effectiveness(col);
             })
-            .catch(error => {
+            .catch(() => {
               this.$root.$data.team[col] = null;
-              console.error(error);
+            })
+            .finally(() => {
+              this.effectiveness();
             });
         }
       }
     },
-    effectiveness(col) {
+    effectiveness() {
       const EMPTY = "";
 
-      var pkmn = this.$root.$data.team[col];
-      if (pkmn === null) {
-        this.types.forEach(type => {
-          var currentCell = document
-            .getElementById(this.cellID(type.name, col));
-          currentCell.innerText = EMPTY;
-          currentCell.style.backgroundColor = "inherit";
-          currentCell.style.color = "inherit";
-        });
-      } else {
-        var pkmnTypes = [];
-        pkmn.types.forEach(obj => {
-          this.types.forEach(template => {
-            if (obj.type.name === template.name) {
-              pkmnTypes.push(template);
+      for(var col = 0; col < this.teamSize; col++) {
+        var pkmn = this.$root.$data.team[col];
+        if (pkmn === null) {
+          this.types.forEach(type => {
+            var currentCell = document
+              .getElementById(this.cellID(type.name, col));
+            currentCell.innerText = EMPTY;
+            currentCell.style.backgroundColor = "inherit";
+            currentCell.style.color = "inherit";
+          });
+        } else {
+          this.team[col] = this.capitalize(pkmn.name);
+
+          var pkmnTypes = [];
+          pkmn.types.forEach(obj => {
+            this.types.forEach(template => {
+              if (obj.type.name === template.name) {
+                pkmnTypes.push(template);
+              }
+            });
+          });
+
+          this.types.forEach(type => {
+            var effectiveness = 1;
+            pkmnTypes.forEach(pkmnType => {
+              pkmnType.damage_relations.no_damage_from
+                .forEach(immunity => {
+                  if (immunity.name === type.name) {
+                    effectiveness *= 0;
+                  }
+                });
+              pkmnType.damage_relations.double_damage_from
+                .forEach(weakness => {
+                  if (weakness.name === type.name) {
+                    effectiveness *= 2;
+                  }
+                });
+              pkmnType.damage_relations.half_damage_from
+                .forEach(resistance => {
+                  if (resistance.name === type.name) {
+                    effectiveness *= 0.5;
+                  }
+                });
+            });
+
+            var currentCell = document
+              .getElementById(this.cellID(type.name, col));
+            currentCell.style.color = "black";
+            switch (effectiveness) {
+              case 0:
+                currentCell.innerText = this.effect.noEffect;
+                currentCell.style.backgroundColor = "darkgreen";
+                break;
+              case 0.25:
+                currentCell.innerText = this.effect.snve;
+                currentCell.style.backgroundColor = "green";
+                break;
+              case 0.5:
+                currentCell.innerText = this.effect.nve;
+                currentCell.style.backgroundColor = "#73be73";
+                break;
+              case 1:
+                currentCell.innerText = this.effect.neutral;
+                break;
+              case 2:
+                currentCell.innerText = this.effect.se;
+                currentCell.style.backgroundColor = "#ff6666";
+                break;
+              case 4:
+                currentCell.innerText = this.effect.sse;
+                currentCell.style.backgroundColor = "red";
+                break;
+              default:
+                currentCell.innerText = EMPTY;
+                break;
             }
           });
-        });
+        }
 
         this.types.forEach(type => {
-          var effectiveness = 1;
-          pkmnTypes.forEach(pkmnType => {
-            pkmnType.damage_relations.no_damage_from
-              .forEach(immunity => {
-                if (immunity.name === type.name) {
-                  effectiveness *= 0;
-                }
-              });
-            pkmnType.damage_relations.double_damage_from
-              .forEach(weakness => {
-                if (weakness.name === type.name) {
-                  effectiveness *= 2;
-                }
-              });
-            pkmnType.damage_relations.half_damage_from
-              .forEach(resistance => {
-                if (resistance.name === type.name) {
-                  effectiveness *= 0.5;
-                }
-              });
-          });
-
-          var currentCell = document
-            .getElementById(this.cellID(type.name, col));
-          currentCell.style.color = "black";
-          switch (effectiveness) {
-            case 0:
-              currentCell.innerText = this.effect.noEffect;
-              currentCell.style.backgroundColor = "darkgreen";
-              break;
-            case 0.25:
-              currentCell.innerText = this.effect.snve;
-              currentCell.style.backgroundColor = "green";
-              break;
-            case 0.5:
-              currentCell.innerText = this.effect.nve;
-              currentCell.style.backgroundColor = "#73be73";
-              break;
-            case 1:
-              currentCell.innerText = this.effect.neutral;
-              break;
-            case 2:
-              currentCell.innerText = this.effect.se;
-              currentCell.style.backgroundColor = "#ff6666";
-              break;
-            case 4:
-              currentCell.innerText = this.effect.sse;
-              currentCell.style.backgroundColor = "red";
-              break;
-            default:
-              currentCell.innerText = EMPTY;
-              break;
+          var row = type.name;
+          var totalWeak = 0;
+          var totalResist = 0;
+          for (var col in this.team) {
+            var cellContents = document
+              .getElementById(this.cellID(row, col)).innerText;
+            if ((cellContents === this.effect.se) ||
+              (cellContents === this.effect.sse)) {
+              totalWeak++;
+            } else if ((cellContents === this.effect.noEffect) ||
+              (cellContents === this.effect.snve) ||
+              (cellContents === this.effect.nve)) {
+              totalResist++;
+            }
+            if(totalWeak > 0) {
+              document.getElementById(row + "-weak").innerText = totalWeak;
+            }
+            if(totalResist > 0) {
+              document.getElementById(row + "-resist").innerText = totalResist;
+            }
           }
         });
       }
-
-      this.types.forEach(type => {
-        var row = type.name;
-        var totalWeak = 0;
-        var totalResist = 0;
-        for (var col in this.team) {
-          var cellContents = document
-            .getElementById(this.cellID(row, col)).innerText;
-          if ((cellContents === this.effect.se) ||
-            (cellContents === this.effect.sse)) {
-            totalWeak++;
-          } else if ((cellContents === this.effect.noEffect) ||
-            (cellContents === this.effect.snve) ||
-            (cellContents === this.effect.nve)) {
-            totalResist++;
-          }
-          document.getElementById(row + "-weak").innerText = totalWeak;
-          document.getElementById(row + "-resist").innerText = totalResist;
-        }
-      });
     }
   },
   watch: {

@@ -114,7 +114,6 @@ export default {
           else if(placeholder.className === "moves") {
             placeholder.style.display = "grid";
             placeholder.style.gridTemplateColumns = "auto auto";
-            console.log(placeholder);
 
             var options = "";
             json.moves.forEach(move => {
