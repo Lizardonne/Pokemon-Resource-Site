@@ -3,7 +3,7 @@
     <div id="nav">
       <router-link to="/">Team</router-link> |
       <router-link to="/moves">Moves</router-link> |
-      <router-link to="/typing">Typing</router-link>
+      <router-link to="/types">Types</router-link>
     </div>
     <router-view />
     <div id="footer">

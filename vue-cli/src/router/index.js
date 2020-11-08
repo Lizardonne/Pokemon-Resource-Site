@@ -18,7 +18,7 @@ const routes = [
     component: Moves
   },
   {
-    path: "/typing",
+    path: "/types",
     name: "Typing",
     component: Typing
   }

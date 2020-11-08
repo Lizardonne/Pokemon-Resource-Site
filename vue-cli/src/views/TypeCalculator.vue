@@ -46,7 +46,7 @@ export default {
   data() {
     // FIXME: fetch team from root-data
     var team = new Array(6);
-    for(var i in team) {
+    for (var i in team) {
       team[i] = this.$root.$data.team[i].name;
     }
 
@@ -97,15 +97,21 @@ export default {
     updateTeam() {
       for (var col in this.team) {
         if (this.team[col] !== undefined) {
-          async (col) => {
-            const response = await fetch("https://pokeapi.co/api/v2/pokemon" + this.team[col]);
-            if (!response.ok) {
-              return;
-            }
-            // FIXME: post to root-data
-            this.$root.$data.team[col] = response.json();
-            this.effectiveness(col);
-          }
+          fetch("https://pokeapi.co/api/v2/pokemon/" + this.team[col])
+            .then(response => {
+              if(!response.ok) {
+                throw new Error();
+              }
+              return response.json();
+            })
+            .then(json => {
+              this.$root.$data.team[col] = json;
+              this.effectiveness(col);
+            })
+            .catch(error => {
+              this.$root.$data.team[col] = null;
+              console.error(error);
+            });
         }
       }
     },
@@ -113,7 +119,6 @@ export default {
       const EMPTY = "";
 
       var pkmn = this.$root.$data.team[col];
-
       if (pkmn === null) {
         this.types.forEach(type => {
           var currentCell = document
@@ -169,14 +174,14 @@ export default {
               break;
             case 0.5:
               currentCell.innerText = this.effect.nve;
-              currentCell.style.backgroundColor = "lightgreen";
+              currentCell.style.backgroundColor = "#73be73";
               break;
             case 1:
               currentCell.innerText = this.effect.neutral;
               break;
             case 2:
               currentCell.innerText = this.effect.se;
-              currentCell.style.backgroundColor = "pink";
+              currentCell.style.backgroundColor = "#ff6666";
               break;
             case 4:
               currentCell.innerText = this.effect.sse;
@@ -211,7 +216,7 @@ export default {
     }
   },
   watch: {
-    team: ["updateTeam"]
+    team: "updateTeam"
   }
 };
 </script>
@@ -229,7 +234,7 @@ input {
   border-bottom: 1px solid gray;
 }
 #header-weak , #header-resist {
-  padding: 0 0.25em;
+  padding: 0.25em 0.25em 0 0.25em;
 }
 
 .row-header {
@@ -241,7 +246,7 @@ input {
   background-color: #ff4040;
 }
 .resist-total {
-  background-color: lightblue;
+  background-color: #72bcd4;
 }
 
 table {
@@ -249,8 +254,8 @@ table {
   border-radius: 1em;
   overflow: hidden;
 }
-.table-body {
-  background-color: white;
+.table-body, input {
+  background-color: lightgray;
 }
 tbody tr:hover {
   background-color: black;
