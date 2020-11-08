@@ -46,4 +46,14 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
 }
+
+@media only screen and (min-width: 961px) {
+  .pokemon {
+    display: grid;
+    grid-template-columns: auto auto auto;
+  }
+  Pokemon {
+    width: 30vw;
+  }
+}
 </style>

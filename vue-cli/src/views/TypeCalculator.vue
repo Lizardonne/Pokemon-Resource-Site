@@ -245,9 +245,12 @@ export default {
 </script>
 
 <style lang="css" scoped>
-table {
-  border-spacing: 0;
+#type-calculator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
 button {
   padding: 0.5em 1em;
   border: none;
@@ -282,6 +285,7 @@ input {
 }
 
 table {
+  border-spacing: 0;
   border: 1px solid gray;
   border-radius: 1em;
   overflow: hidden;

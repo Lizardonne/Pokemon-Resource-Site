@@ -23,12 +23,12 @@ export default {
     },
     teamHTML() {
       return '<div class="stats">' +
-        '<div class="hp">-</div>' +
-        '<div class="atk">-</div>' +
-        '<div class="def">-</div>' +
-        '<div class="spa">-</div>' +
-        '<div class="spd">-</div>' +
-        '<div class="spe">-</div>' +
+        '<div class="hp"></div>' +
+        '<div class="atk"></div>' +
+        '<div class="def"></div>' +
+        '<div class="spa"></div>' +
+        '<div class="spd"></div>' +
+        '<div class="spe"></div>' +
       '</div>';
     }
   }
@@ -43,8 +43,16 @@ export default {
 
 .pokemon {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
   justify-content: center;
+}
+
+@media only screen and (min-width: 961px) {
+  .pokemon {
+    display: grid;
+    grid-template-columns: auto auto auto;
+  }
+  Pokemon {
+    width: 30vw;
+  }
 }
 </style>

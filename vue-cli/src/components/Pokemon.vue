@@ -220,4 +220,10 @@ input {
   flex-direction: row;
   justify-content: space-between;
 }
+
+@media only screen and (min-width: 961px) {
+  #pokemon {
+    width: auto;
+  }
+}
 </style>

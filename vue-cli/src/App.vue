@@ -5,7 +5,9 @@
       <router-link to="/moves">Moves</router-link> |
       <router-link to="/types">Types</router-link>
     </div>
-    <router-view />
+    <div id="body">
+      <router-view />
+    </div>
     <div id="footer">
       <div>
         <a href="#">GitHub</a>
@@ -42,11 +44,12 @@
   color: #ff4040;
 }
 
+#body {
+  margin-bottom: auto;
+}
+
 #footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  margin-top: auto;
   padding: 2%;
   background-color: white;
 }
