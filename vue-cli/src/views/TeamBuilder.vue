@@ -27,8 +27,8 @@
             <template v-for="n in teamSize">
               <td :key="n" v-bind:id="cellID(type.name, n)"></td>
             </template>
-            <th v-bind:id="type.name + '-weak'"></th>
-            <th v-bind:id="type.name + '-resist'"></th>
+            <th v-bind:id="type.name + '-weak'">0</th>
+            <th v-bind:id="type.name + '-resist'">0</th>
           </tr>
         </template>
       </tbody>
@@ -43,6 +43,14 @@ export default {
     return {
       types: [],
       inputs: [],
+      effect: {
+        noEffect: "0",
+        snve: "1/4",
+        nve: "1/2",
+        neutral: "",
+        se: "2",
+        sse: "4"
+      },
       teamSize: 6
     };
   },
@@ -116,30 +124,52 @@ export default {
                   var currentCell = document.getElementById(this.cellID(type.name, col));
                   switch (effectiveness) {
                     case 0:
-                      currentCell.innerText = "No effect";
+                      currentCell.innerText = this.effect.noEffect;
                       break;
                     case 0.25:
-                      currentCell.innerText = "1/4";
+                      currentCell.innerText = this.effect.snve;
                       break;
                     case 0.5:
-                      currentCell.innerText = "1/2";
+                      currentCell.innerText = this.effect.nve;
                       break;
                     case 1:
-                      currentCell.innerText = "";
+                      currentCell.innerText = this.effect.neutral;
                       break;
                     case 2:
-                      currentCell.innerText = "2";
+                      currentCell.innerText = this.effect.se;
                       break;
                     case 4:
-                      currentCell.innerText = "4";
+                      currentCell.innerText = this.effect.sse;
                       break;
                     default:
-                      currentCell.innerText = "*";
+                      currentCell.innerText = EMPTY;
                       break;
                   }
                 });
               }
             }
+
+            this.types.forEach(type => {
+              var row = type.name;
+              var totalWeak = 0;
+              var totalResist = 0;
+              for(var col in this.inputs) {
+                var cellContents = document.getElementById(this.cellID(row, col)).innerText;
+                console.log(cellContents);
+                if((cellContents === this.effect.se) ||
+                    (cellContents === this.effect.sse)) {
+                  totalWeak++;
+                }
+                else if((cellContents === this.effect.noEffect) ||
+                    (cellContents === this.effect.snve) ||
+                    (cellContents === this.effect.nve)) {
+                  totalResist++;
+                }
+                console.log(totalWeak, totalResist);
+                document.getElementById(row + "-weak").innerText = totalWeak;
+                document.getElementById(row + "-resist").innerText = totalResist;
+              }
+            });
           });
       }
 
