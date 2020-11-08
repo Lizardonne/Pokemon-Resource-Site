@@ -9,7 +9,7 @@
       <div :id="index + '-abilities'" class="abilities"></div>
       <div :id="index + '-insert-data-here'" class="insert-data-here"></div>
     </div>
-    <!-- FIXME: later implementation...
+    <!-- FIXME: later implementation...?
     <div class="footer">
       <p :id="index + '-flavor-text'" class="flavor-text">-</p>
       <div :id="index + '-dex-num'" class="dex-num">-</div>
@@ -96,7 +96,6 @@ export default {
           }
 
           document.getElementById(this.index + "-insert-data-here").innerHTML = this.addOn;
-          // FIXME: stats/moves div
           var placeholder = document.getElementById(this.index + "-insert-data-here").children[0];
           if(placeholder.className === "stats") {
             for(var i = 0; i < placeholder.childElementCount; i++) {
@@ -201,6 +200,7 @@ input {
   margin-bottom: 0.5em;
   display: flex;
   flex-direction: row;
+  flex-flow: wrap;
   justify-content: space-around;
   align-items: center;
 }

@@ -1,6 +1,7 @@
 <template lang="html">
   <div id="type-calculator">
     <h1>Type Calculator</h1>
+    <button @click="effectiveness">Refresh</button>
     <table>
       <colgroup>
         <col class="row-header"/>
@@ -44,7 +45,6 @@
 export default {
   name: "TypeCalculator",
   data() {
-    // FIXME: fetch team from root-data
     var team = new Array(6);
     for(var i = 0; i < team.length; i++) {
       if(this.$root.$data.team[i] !== null) {
@@ -82,10 +82,15 @@ export default {
               this.types.push(json);
             });
         });
-        console.log("start");
-        this.effectiveness();
-        console.log("should be done");
       });
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.effectiveness();
+      // FIXME: don't know why this isn't refreshing
+      //  after populating the table, so the button
+      //  will have to serve for now
+    });
   },
   computed: {
     teamSize() {
@@ -101,7 +106,10 @@ export default {
     },
     updateTeam() {
       for (var col in this.team) {
-        if (this.team[col] !== undefined) {
+        if (this.team[col] === "") {
+          this.$root.$data.team[col] = null;
+        }
+        else if (this.team[col] !== undefined) {
           fetch("https://pokeapi.co/api/v2/pokemon/" + this.team[col])
             .then(response => {
               if(!response.ok) {
@@ -116,12 +124,13 @@ export default {
               this.$root.$data.team[col] = null;
             })
             .finally(() => {
-              this.effectiveness();
+              console.log("end u");
             });
         }
       }
     },
     effectiveness() {
+      console.log("start e");
       const EMPTY = "";
 
       for(var col = 0; col < this.teamSize; col++) {
@@ -230,7 +239,7 @@ export default {
     }
   },
   watch: {
-    team: "updateTeam"
+    team: ["updateTeam", "effectiveness"]
   }
 };
 </script>
@@ -238,6 +247,15 @@ export default {
 <style lang="css" scoped>
 table {
   border-spacing: 0;
+}
+button {
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 1em 1em 0 0;
+  background-color: gray;
+}
+button:hover {
+  font-weight: bold;
 }
 
 input {
