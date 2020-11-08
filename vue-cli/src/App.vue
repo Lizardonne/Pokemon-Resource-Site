@@ -10,7 +10,7 @@
     </div>
     <div id="footer">
       <div>
-        <a href="#">GitHub</a>
+        <a href="https://github.com/Lizardonne/Pokemon-Resource-Site">GitHub</a>
       </div>
     </div>
   </div>
