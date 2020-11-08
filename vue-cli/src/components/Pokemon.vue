@@ -96,6 +96,39 @@ export default {
           }
 
           document.getElementById(this.index + "-insert-data-here").innerHTML = this.addOn;
+          // FIXME: stats/moves div
+          var placeholder = document.getElementById(this.index + "-insert-data-here").children[0];
+          if(placeholder.className === "stats") {
+            for(var i = 0; i < placeholder.childElementCount; i++) {
+              placeholder.children[i].innerText = json.stats[i].base_stat;
+              var statStyle = placeholder.children[i].style;
+              statStyle.width = json.stats[i].base_stat + "%";
+              statStyle.height = "5%";
+              statStyle.margin = "0.5em";
+              statStyle.paddingLeft = "0.5em";
+              statStyle.backgroundColor = "white";
+              statStyle.borderRadius = "1em";
+              statStyle.textAlign = "left";
+            }
+          }
+          else if(placeholder.className === "moves") {
+            placeholder.style.display = "grid";
+            placeholder.style.gridTemplateColumns = "auto auto";
+            console.log(placeholder);
+
+            var options = "";
+            json.moves.forEach(move => {
+              options += "<option>" + this.capitalize(move.move.name) + "</option>"
+            });
+            for(var j = 0; j < placeholder.childElementCount; j++) {
+              placeholder[j].innerHTML = options;
+              var moveStyle = placeholder[j].style;
+              moveStyle.borderRadius = "1em 0 0 1em";
+              moveStyle.border = "none";
+              moveStyle.overflow = "hidden";
+              moveStyle.margin = "0.5em";
+            }
+          }
 
           var flavorText = "Flavor text not found";
           document.getElementById(this.index + "-flavor-text").innerText = flavorText;
@@ -113,7 +146,7 @@ export default {
   },
   computed: {
     isEmpty() {
-      return (this.name === "");
+      return this.name === "";
     }
   },
   watch: {
@@ -158,19 +191,23 @@ input {
 }
 
 .body {
-  width: 100%;
+  width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .abilities {
-  width: 50%;
+  width: 100%;
   padding: 0.25em;
   margin-bottom: 0.5em;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+}
+
+.insert-data-here {
+  width: 100%;
 }
 
 .types, .abilities {

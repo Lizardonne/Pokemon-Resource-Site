@@ -22,17 +22,14 @@ export default {
       return this.$root.$data.team.length;
     },
     teamHTML() {
-      return "";
-      /*
-      <div class="stats">
-        <div class="hp" :style="'width: ' + "></div>
-        <div class="atk"></div>
-        <div class="def"></div>
-        <div class="spa"></div>
-        <div class="spd"></div>
-        <div class="spe"></div>
-      </div>
-      */
+      return '<div class="stats">' +
+        '<div class="hp">-</div>' +
+        '<div class="atk">-</div>' +
+        '<div class="def">-</div>' +
+        '<div class="spa">-</div>' +
+        '<div class="spd">-</div>' +
+        '<div class="spe">-</div>' +
+      '</div>';
     }
   }
 };

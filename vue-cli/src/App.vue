@@ -25,14 +25,14 @@
   padding: 30px;
 }
 
-#nav a {
+#nav a, #footer a {
   padding: 0.5em;
   border-radius: 0.5em;
   font-weight: bold;
   color: black;
 }
 
-#nav a:hover {
+#nav a:hover, #footer a:hover {
   background-color: lightgray;
 }
 
@@ -40,6 +40,15 @@
   color: #ff4040;
 }
 
+#footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 5%;
+}
 p {
   margin: 0;
 }

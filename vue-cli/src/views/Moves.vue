@@ -22,11 +22,11 @@ export default {
       return this.$root.$data.team.length;
     },
     movesHTML() {
-      return "<form>" +
-        "<select id='move-1' class='move'></select>" +
-        "<select id='move-2' class='move'></select>" +
-        "<select id='move-3' class='move'></select>" +
-        "<select id='move-4' class='move'></select>" +
+      return "<form class='moves'>" +
+        "<select class='move'></select>" +
+        "<select class='move'></select>" +
+        "<select class='move'></select>" +
+        "<select class='move'></select>" +
       "</form>";
     }
   }
