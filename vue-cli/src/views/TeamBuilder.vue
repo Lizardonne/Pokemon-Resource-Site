@@ -4,9 +4,9 @@
     <table>
       <colgroup>
         <col />
-        <col v-bind:span="teamSize" />
-        <col />
-        <col />
+        <col class="table-body" v-bind:span="teamSize" />
+        <col class="weak-total" />
+        <col class="resist-total" />
       </colgroup>
       <thead>
         <tr>
@@ -206,12 +206,39 @@ export default {
 </script>
 
 <style lang="css" scoped>
+table {
+  border-spacing: 0;
+}
+
 input {
   width: 90%;
-  padding: 0 5%;
+  padding: 0;
   text-align: center;
 }
+#header-weak , #header-resist {
+  padding: 0 0.25em;
+}
+
 .row-header {
   text-align: right;
+}
+.weak-total {
+  background-color: red;
+}
+.resist-total {
+  background-color: lightblue;
+}
+
+table {
+  border: 1px solid gray;
+  border-radius: 1em;
+  overflow: hidden;
+}
+.table-body {
+  background-color: white;
+}
+tbody tr:hover {
+  background-color: black;
+  color: lightgray;
 }
 </style>
