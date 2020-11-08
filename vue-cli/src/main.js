@@ -5,7 +5,14 @@ import router from "./router";
 Vue.config.productionTip = false;
 
 let data = {
-  favorites: []
+  team: [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ]
 };
 
 new Vue({

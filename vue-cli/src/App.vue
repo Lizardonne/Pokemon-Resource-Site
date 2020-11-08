@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Dex</router-link> |
-      <router-link to="/search">Search</router-link> |
-      <router-link to="/teambuilder">Team Builder</router-link>
+      <router-link to="/">Team</router-link> |
+      <router-link to="/moves">Moves</router-link> |
+      <router-link to="/typing">Typing</router-link>
     </div>
     <router-view />
     <div id="footer">
@@ -18,7 +18,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   box-sizing: border-box;
 }
 
@@ -27,11 +26,21 @@
 }
 
 #nav a {
+  padding: 0.5em;
+  border-radius: 0.5em;
   font-weight: bold;
-  color: #2c3e50;
+  color: black;
+}
+
+#nav a:hover {
+  background-color: lightgray;
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: #ff4040;
+}
+
+p {
+  margin: 0;
 }
 </style>

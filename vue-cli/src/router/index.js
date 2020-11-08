@@ -1,26 +1,26 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Dex from "../views/Dex.vue";
-import Search from "../views/Search.vue";
-import TeamBuilder from "../views/TeamBuilder.vue";
+import Team from "../views/Team.vue";
+import Moves from "../views/Moves.vue";
+import Typing from "../views/TypeCalculator.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Dex",
-    component: Dex
+    name: "Team",
+    component: Team
   },
   {
-    path: "/search",
-    name: "Search",
-    component: Search
+    path: "/moves",
+    name: "Moves",
+    component: Moves
   },
   {
-    path: "/teambuilder",
-    name: "TeamBuilder",
-    component: TeamBuilder
+    path: "/typing",
+    name: "Typing",
+    component: Typing
   }
 ];
 
